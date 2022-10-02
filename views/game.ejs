@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="shortcut icon" href="/img/icons8-clubs-96.png" type="image/x-icon">
+    <link rel="stylesheet" href="/css/boxicons.css">
+    <style>
+        :root{
+            --blue: #092d31;
+            --cyan: #1cbe8e;
+            --green: #075437;
+            --white: #eaeff2;
+        }
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+            border: none;
+            outline: none;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ul{
+            list-style: none;
+        }
+        /* html,
+        body{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        } */
+
+        .container{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--green);
+        }
+        [v-cloak]{
+            display: none;
+        }
+
+        .login{
+            max-width: 300px;
+            width: 100%;
+            background: var(--blue);
+            border-radius: 3px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 10px;
+        }
+
+        button{
+            padding: 5px 15px;
+            color: var(--white);
+            background: var(--cyan);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: transform .1s, background .2s;
+        }
+        button:hover{
+            background: #19aa7f;
+        }
+        button:active{
+            transform: scale(.95);
+        }
+        
+        .create-button{
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .room-list{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .room-list li{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+            color: var(--white);
+            border-bottom: 1px solid #344a;
+        }
+        .game{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .game-carts{
+            position: absolute;
+            left: 0;
+        }
+        .carts{
+            position: relative;
+        }
+        .zot{
+            position: absolute;
+            top: -10px;
+        }
+        .zot img{
+            width: 70px;
+            transform: rotate(90deg);
+            border-radius: 5px;
+        }
+        .carts img{
+            position: absolute;
+            width: 50px;
+            height: 80px;
+            transform: rotate(calc(10deg * var(--deg)));
+            transform-origin: center var(--tror);
+            border-radius: 3px;
+        }
+
+        .users-box{
+            position: absolute;
+            top: 20px;
+            right: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 10px 40px;
+        }
+
+        .users-box .username{
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .cart img{
+            width: 100px;
+            border-radius: 5px;
+        }
+
+        .cart{
+            position: relative;
+        }
+
+        .my-carts{
+            position: absolute;
+            bottom: 20px;
+            left: 0px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .my-carts .cart{
+            transition: .3s;
+            position: absolute;
+            bottom: 0;
+            cursor: pointer;
+            margin-left: calc(var(--ml) * 30px);
+        }
+        .my-carts .cart:hover{
+            transform: translateY(-20px);
+        }
+        .my-carts .cart:active{
+            transform: translateY(-20px) scale(1.1);
+        }
+        .my-carts .cart.changed{
+            transform: translateY(-20px) scale(1.1);
+        }
+        .game-box{
+            position: absolute;
+            right: 20px;
+            top: 180px;
+            max-width: 60%;
+            height: 350px;
+            display: flex;
+            /* justify-content: center;
+            align-items: center; */
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .game-box img{
+            width: 80px;
+        }
+        .asnw{
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+
+        .name{
+            position: absolute;
+            top: 30px;
+            right: 20px;
+            color: var(--white);
+        }
+
+        input{
+            padding: 5px 15px;
+            width: 150px;
+            color: var(--white);
+            background: var(--cyan);
+        }
+
+        ::placeholder{
+            color: var(--white);
+        }
+        .game-board{
+            width: 80%;
+            display: flex;
+            margin-left: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+        .shield{
+            position: absolute;
+            font-size: 5rem;
+            color: #fff4;
+        }
+        .buttons{
+            position: absolute;
+            right: 20px;
+            bottom: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container" v-cloak>
+        <div class="name" v-show="!gameJoin">
+            <div v-if="name">{{ name }} <button @click="clearname">x</button></div>
+            <input v-else type="text" placeholder="Username" @keypress.enter="entername">
+        </div>
+        <div class="login" v-if="!gameJoin">
+            <button class="create-button" @click="createRoom" :disabled="!name">Создать</button>
+            <ul class="room-list">
+                <li v-for="(r, i) in rooms" :key="r.id" v-if="!r.started">
+                    {{i+1}}. {{ r.roomName }}
+                    <button @click="register(r.roomId)">вход</button>
+                </li>
+            </ul>
+        </div>
+        <div class="game" v-else>
+            <div class="login" v-if="!Game?.started">
+                <button @click="start" v-if="(Game?.creator === socketId) && !Game?.started" class="create-button">start</button>
+                <ul style="color: var(--white);">
+                    <li v-for="(m, i) in chat" :key="i"><b>{{ m.name?m.name:'Game' }}</b>: {{ m.text }}</li>
+                </ul>
+                <input type="text" placeholder="message" v-model="message" @keypress.enter="sendMess">
+            </div>
+
+            <div class="game-board" v-else>
+                <div class="game-carts">
+                    <div class="zot">
+                        <img :src="`/carts/${Game?.zot.img}`">
+                    </div>
+                    <div class="carts" style="--tror: center;">
+                        <img style="--deg: 1;" src="/carts/back.jpg">
+                        <img style="--deg: 2;" src="/carts/back.jpg">
+                        <img style="--deg: 3;" src="/carts/back.jpg">
+                    </div>
+                </div>
+    
+                <div class="users-box">
+                    <div class="user" v-for="ply in Game?.players" :key="ply.id" v-if="socketId!==ply.id">
+                        <div class="username"><i class="bx bxs-shield" v-if="ply.def"></i>{{ ply.name }} ({{ ply.carts.length }})</div>
+                        <div class="carts" style="--tror: 0;">
+                            <img style="--deg: 0;" src="/carts/back.jpg">
+                            <img style="--deg: -.7;" src="/carts/back.jpg">
+                            <img style="--deg: -1.3;" src="/carts/back.jpg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-box">
+                    <div class="cart" v-for="c in Game?.gamearea" :key="c.id">
+                        <img  :src="`/carts/${c.img}`" width="50" @click="def(c)">
+                        <div class="asnw">
+                            <img :src="`/carts/${c.answ.img}`" v-if="c.answ">
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="my-carts">
+                    <div class="cart" 
+                        :class="changedcart?.id === c.id ? 'changed':''" 
+                        v-for="(c, i) in sortedCarts" :key="c.id" @click="attack(c)" 
+                        :style="`--ml: ${i}`">
+                        <img :src="`/carts/${c.img}`" alt="">
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button @click="getCarts()" v-if="myplayer.def">Fail</button>
+                    <button @click="next()">Next</button>
+                </div>
+                <i class="bx bxs-shield shield" v-if="myplayer.def"></i>
+            </div>
+        </div>
+        <!-- <div class="game" v-else>
+            <div class="game-box">
+                <h2>Game</h2>
+                <ul>
+                    <li>
+                        
+                        
+                    </li>
+                </ul>
+                <h3>Game Box</h3>
+                <ul style="display: flex; column-gap: 10px; flex-wrap: wrap;">
+                    <li style="position: relative;">
+                        <img>
+                        <img style="position: absolute; top: 5px; left: 5px;" width="50">
+                    </li>
+                </ul>
+               
+                
+            </div>
+
+            <div class="chat">
+                <h4>chat</h4>
+                
+            </div>
+        </div> -->
+
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/vue.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                socket: new io(),
+                name: localStorage.getItem('cart-game-user') || '',
+                gameJoin: false,
+                chat: [],
+                rooms: [],
+                socketId: null,
+                Game: null,
+                message: '',
+                changedcart: null
+            },
+            methods: {
+                register(id){
+                    this.socket.emit('join-room', {id, name: this.name})
+                    this.gameJoin = true;
+                },
+                createRoom(){
+                    this.socket.emit('create-room', this.name)
+                    this.gameJoin = true;
+                },
+
+
+                entername(e){
+                    this.name = e.target.value;
+                    localStorage.setItem('cart-game-user', this.name);
+                },
+                clearname(){
+                    localStorage.removeItem('cart-game-user');
+                    this.name = '';
+                },
+
+                
+                start(){
+                    this.socket.emit('start-game', this.Game.roomId)
+                },
+                attack(cart){
+                    if(this.myplayer.def){
+                        this.changedcart = cart;
+                    }else{
+                        this.myplayer.carts = this.myplayer.carts.filter(c => c.id !== cart.id)
+                        this.socket.emit('run-cart', {id: this.Game.roomId, player: this.myplayer, cart})
+                    }
+                },
+                def(cart){
+                    if(this.myplayer.def && !cart.answ){
+                        if( (cart.cardId === this.zot.cardId) && (this.changedcart.pos > cart.pos)
+                            || ((this.changedcart.cardId === this.zot.cardId) && (cart.cardId !== this.zot.cardId)) 
+                            || (this.changedcart.cardId === cart.cardId && this.changedcart.pos > cart.pos)){
+                            this.myplayer.carts = this.myplayer.carts.filter(c => c.id !== this.changedcart.id)
+                            this.socket.emit('def-cart', {id: this.Game.roomId, player: this.myplayer, cart: this.changedcart, cartId: cart.id})
+                            this.changedcart = null;
+                        }
+                    }
+                },
+                getCarts(){
+                    this.socket.emit('get-game-cards', this.Game.roomId)
+                },
+                next(){
+                    this.socket.emit('next-round', this.Game.roomId)
+                },
+
+                sendMess(){
+                    if(!this.message.trim()) return;
+                    this.socket.emit('send-mess', { id: this.socketId, name: this.myplayer.name, text: this.message, rmId: this.Game.roomId })
+                    this.message = '';
+                },
+                clearRooms(){ this.socket.emit('clear-room') }
+            },
+            computed: {
+                me(){
+                    return this.Game?.players.find(pl => pl.id === this.socketId).name
+                },
+                myplayer(){
+                    return this.Game?.players.find(pl => pl.id === this.socketId)
+                },
+                zot(){
+                    return this.Game?.zot
+                },
+                sortedCarts(){
+                    return this.Game?.players.find(pl => pl.id === this.socketId).carts.sort((a, b) => a.pos - b.pos);
+                }
+            },
+            created(){
+                this.socket.on('get-rooms', (data) => {
+                    this.rooms = data;
+                })
+                this.socket.on('get-id', (id) => this.socketId = id)
+                this.socket.on('receive-mess', (data) => {
+                    this.chat.push(data);
+                })
+                this.socket.on('get-created-room', (data) => {
+                    this.Game = data
+                })
+                this.socket.on('get-resources', (data) => this.Game = data)
+            },
+        })
+    </script>
+</body>
+</html>

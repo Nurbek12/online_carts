@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="container" id="app">
+        <div class="wrapper">
+            <div class="gamebox">
+                <div class="playerbox">
+                    <div class="player">
+                        <div class="playercarts">
+                            <div class="playercart" style="--r: 0;"></div>
+                            <div class="playercart" style="--r: 1;"></div>
+                            <div class="playercart" style="--r: 2;"></div>
+                            <div class="playercart" style="--r: 3;"></div>
+                            <div class="playercart" style="--r: 4;"></div>
+                            <div class="playercart" style="--r: 5;"></div>
+                            <div class="playercart" style="--r: 6;"></div>
+                            <div class="playercart" style="--r: 7;"></div>
+                            <div class="playercart" style="--r: 8;"></div>
+                            <div class="playercart" style="--r: 9;"></div>
+                        </div>
+                        <div class="playername">bakjajan 1</div>
+                    </div>
+                    <div class="player">
+                        <div class="playercarts">
+                            <div class="playercart" style="--r: 1;"></div>
+                            <div class="playercart" style="--r: 2;"></div>
+                        </div>
+                        <div class="playername">bakjajan 2</div>
+                    </div>
+                </div>
+                <div class="zotcard"></div>
+                <div class="game">
+                    <div class="cardcont">
+                        <div class="carts"></div>
+                        <div class="defcard"></div>
+                    </div>
+                    <div class="cardcont">
+                        <div class="carts"></div>
+                    </div>
+                    <div class="cardcont">
+                        <div class="carts"></div>
+                    </div>
+                    <div class="cardcont">
+                        <div class="carts"></div>
+                    </div>
+                    <div class="cardcont">
+                        <div class="carts"></div>
+                    </div>
+                </div>
+                <div class="mycarts">
+                    <div class="mycart" style="--l: 0;"></div>
+                    <div class="mycart" style="--l: 1;"></div>
+                    <div class="mycart" style="--l: 2;"></div>
+                    <div class="mycart" style="--l: 3;"></div>
+                </div>
+            </div>
+            <div class="chatbox">
+                <div class="chat">
+                    <div class="char-w" id="chatbox">
+                        <div class="message me">
+                            hello
+                            <span class="time">00:00</span>
+                        </div>
+                        <div class="message oth">
+                            <span class="m-name">baklajan</span><br>
+                            hello
+                            <span class="time">00:01</span>
+                        </div>
+                        <div class="message oth">
+                            <span class="m-name">baklajan</span><br>
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi voluptas sed minus asperiores quas!
+                            <span class="time">00:01</span>
+                        </div>
+                        <div class="message msg">
+                            <span class="m-name">baklajan</span> Boshla
+                        </div>
+                    </div>
+                </div>
+                <div class="send">
+                    <div>
+                        <input type="text" placeholder="Send..." id="text">
+                        <button onclick="sendMess()">Send</button>
+                    </div>
+                    <div>
+                        <button>Начать</button>
+                        <button>Завершить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/vue.js"></script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                socket: new io(),
+                chat: [],
+            },
+            methods: {
+
+            },
+            created(){
+                this.socket.on('getallresources', (data) => {
+                    console.log(data);
+                })
+            }
+        })
+    </script>
+</body>
+</html>
